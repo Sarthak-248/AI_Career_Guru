@@ -27,6 +27,8 @@ model User {
   assessments   Assessment[]
   resume        Resume?
   coverLetter   CoverLetter[]
+  jobAlertSubscriptions JobAlertSubscription[]
+  sentJobAlerts SentJobAlert[]
 }
 
 model Assessment {
@@ -96,4 +98,80 @@ model IndustryInsight {
   nextUpdate    DateTime  // Scheduled update time
 
   @@index([industry])
+}
+
+enum AlertFrequency {
+  IMMEDIATE
+  DAILY
+  WEEKLY
+}
+
+enum ExperienceLevel {
+  ENTRY
+  MID
+  SENIOR
+}
+
+enum RemotePreference {
+  REMOTE
+  ONSITE
+  HYBRID
+  FLEXIBLE
+}
+
+model JobAlertSubscription {
+  id               String            @id @default(cuid())
+  userId           String
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  titleQuery       String
+  location         String?
+  remotePreference RemotePreference  @default(FLEXIBLE)
+  skills           String[]         @default([])
+  experienceLevel  ExperienceLevel   @default(MID)
+  frequency        AlertFrequency    @default(DAILY)
+  isActive         Boolean           @default(true)
+  lastSentAt       DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  sentAlerts SentJobAlert[]
+
+  @@index([userId])
+  @@unique([userId, titleQuery])
+}
+
+model JobListing {
+  id         String          @id @default(cuid())
+  sourceId   String?
+  source     String          @default("adzuna")
+  title      String
+  company    String?
+  location   String?
+  country    String? 
+  url        String          @unique
+  isRemote   Boolean         @default(false)
+  postedAt   DateTime?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  raw        Json?
+
+  sentAlerts SentJobAlert[]
+}
+
+model SentJobAlert {
+  id              String                @id @default(cuid())
+  subscriptionId  String
+  jobListingId    String
+  userId          String
+  score           Int
+  delivered       Boolean               @default(false)
+  sentAt          DateTime              @default(now())
+  createdAt       DateTime              @default(now())
+
+  subscription    JobAlertSubscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  jobListing      JobListing            @relation(fields: [jobListingId], references: [id], onDelete: Cascade)
+  user            User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([subscriptionId, jobListingId])
+  @@index([userId])
 }
