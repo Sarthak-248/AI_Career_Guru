@@ -1,4 +1,4 @@
-import { getIndustryInsights } from "@/actions/dashboard";
+import { getIndustryInsights, getSkillGapAnalysis } from "@/actions/dashboard";
 import DashboardView from "./_component/dashboard-view";
 import { getUserOnboardingStatus } from "@/actions/user";
 import { redirect } from "next/navigation";
@@ -13,10 +13,11 @@ export default async function DashboardPage() {
   }
 
   const insights = await getIndustryInsights();
+  const skillAnalysis = await getSkillGapAnalysis();
 
   return (
     <div className="container mx-auto">
-      <DashboardView insights={insights} />
+      <DashboardView insights={insights} skillAnalysis={skillAnalysis} />
     </div>
   );
 }

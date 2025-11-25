@@ -28,7 +28,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 
-const DashboardView = ({ insights }) => {
+const DashboardView = ({ insights, skillAnalysis }) => {
   // Transform salary data for the chart
   const salaryData = insights.salaryRanges.map((range) => ({
     name: range.role,
@@ -184,8 +184,8 @@ const DashboardView = ({ insights }) => {
         </CardContent>
       </Card>
 
-      {/* Industry Trends */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Industry Trends & Skill Gap */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader>
             <CardTitle>Key Industry Trends</CardTitle>
@@ -218,6 +218,81 @@ const DashboardView = ({ insights }) => {
                 </Badge>
               ))}
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Skill Gap Analysis Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Skill Gap Analysis</CardTitle>
+            <CardDescription>
+              Skills you don't currently have that are recommended for your
+              industry
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {skillAnalysis && skillAnalysis.missingSkills?.length > 0 ? (
+              <div className="space-y-4">
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {skillAnalysis.missingSkills.map((ms) => (
+                    <Badge key={ms} variant="destructive">
+                      {ms}
+                    </Badge>
+                  ))}
+                </div>
+
+                {/* Learning path summary */}
+                {skillAnalysis.learningPath &&
+                skillAnalysis.learningPath.learningPath &&
+                skillAnalysis.learningPath.learningPath.length > 0 ? (
+                  <div className="space-y-3">
+                    {skillAnalysis.learningPath.learningPath.map((item) => (
+                      <div
+                        key={item.skill}
+                        className="border rounded-md p-3 hover:shadow-sm"
+                      >
+                        <div className="flex justify-between items-center">
+                          <div className="font-medium">{item.skill}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {item.priority}
+                          </div>
+                        </div>
+                        <div className="text-sm text-muted-foreground mt-2">
+                          Estimated hours: {item.estimatedHours || "—"}
+                        </div>
+                        <ul className="mt-2 list-disc pl-5 text-sm">
+                          {(item.steps || []).slice(0, 3).map((s, i) => (
+                            <li key={i}>{s}</li>
+                          ))}
+                        </ul>
+                        <div className="mt-3 flex gap-2">
+                          <a
+                            href={
+                              (item.resources && item.resources[0]?.url) ||
+                              "#"
+                            }
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-sm text-primary underline"
+                          >
+                            View resource
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-sm text-muted-foreground">
+                    No learning path available yet.
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-sm text-muted-foreground">
+                You're aligned with the top recommended skills for your
+                industry.
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

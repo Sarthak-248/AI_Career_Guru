@@ -9,6 +9,7 @@ import {
   StarsIcon,
 } from "lucide-react";
 import Link from "next/link";
+import AnalyzeSkillGapsButton from "@/components/AnalyzeSkillGapsButton";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import {
   DropdownMenu,
@@ -39,6 +40,8 @@ export default async function Header() {
         {/* Action Buttons */}
         <div className="flex items-center space-x-2 md:space-x-4">
           <SignedIn>
+            <AnalyzeSkillGapsButton className="hidden md:inline-flex items-center gap-2" />
+            <AnalyzeSkillGapsButton className="md:hidden w-10 h-10 p-0" />
             <Link href="/alerts">
               <Button
                 variant="outline"
