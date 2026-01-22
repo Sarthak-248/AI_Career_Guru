@@ -4,9 +4,9 @@ import { db } from "@/lib/prisma";
 import { checkUser } from "@/lib/checkUser";
 
 type Context = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export async function DELETE(_request: Request, context: Context) {
@@ -15,8 +15,10 @@ export async function DELETE(_request: Request, context: Context) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { id } = await context.params;
+
   const subscription = await db.jobAlertSubscription.findUnique({
-    where: { id: context.params.id },
+    where: { id },
   });
 
   if (!subscription || subscription.userId !== user.id) {
