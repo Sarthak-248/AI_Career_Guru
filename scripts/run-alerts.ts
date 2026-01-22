@@ -1,7 +1,10 @@
 import "dotenv/config";
 
 const endpoint =
-  process.env.ALERTS_RUN_URL ?? "http://localhost:3000/api/alerts/run";
+  process.env.ALERTS_RUN_URL ??
+  (process.env.NEXT_PUBLIC_APP_URL
+    ? `${process.env.NEXT_PUBLIC_APP_URL}/api/alerts/run`
+    : "http://localhost:3000/api/alerts/run");
 const secret = process.env.ALERTS_RUN_SECRET;
 
 const main = async () => {
@@ -27,6 +30,7 @@ main().catch((error) => {
   console.error("[alerts:run] error", error);
   process.exit(1);
 });
+
 
 
 
