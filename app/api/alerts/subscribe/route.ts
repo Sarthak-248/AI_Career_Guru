@@ -58,6 +58,20 @@ export async function POST(request: Request) {
 
   const skills = sanitizeSkills(parsed.data.skills);
 
+  const existingSubscription = await db.jobAlertSubscription.findFirst({
+    where: {
+      userId: user.id,
+      titleQuery: parsed.data.titleQuery.trim(),
+    },
+  });
+
+  if (existingSubscription) {
+    return NextResponse.json(
+      { error: "Subscription already exists for this query" },
+      { status: 409 }
+    );
+  }
+
   const subscription = await db.jobAlertSubscription.create({
     data: {
       userId: user.id,
