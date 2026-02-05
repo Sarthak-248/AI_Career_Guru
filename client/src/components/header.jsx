@@ -7,6 +7,7 @@ import {
   GraduationCap,
   ChevronDown,
   StarsIcon,
+  Menu,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import AnalyzeSkillGapsButton from "./AnalyzeSkillGapsButton";
@@ -36,67 +37,99 @@ export default function Header() {
         {/* Action Buttons */}
         <div className="flex items-center space-x-2 md:space-x-4">
           <SignedIn>
-            <AnalyzeSkillGapsButton className="hidden md:inline-flex items-center gap-2" />
-            <AnalyzeSkillGapsButton className="md:hidden w-10 h-10 p-0" />
-            <Link to="/alerts">
-              <Button
-                variant="outline"
-                className="hidden md:inline-flex items-center gap-2"
-              >
-                <StarsIcon className="h-4 w-4" />
-                Create Alerts
-              </Button>
-              <Button variant="ghost" className="md:hidden w-10 h-10 p-0">
-                <StarsIcon className="h-4 w-4" />
-              </Button>
-            </Link>
-
-            <Link to="/dashboard">
-              <Button
-                variant="outline"
-                className="hidden md:inline-flex items-center gap-2"
-              >
-                <LayoutDashboard className="h-4 w-4" />
-                Industry Insights
-              </Button>
-              <Button variant="ghost" className="md:hidden w-10 h-10 p-0">
-                <LayoutDashboard className="h-4 w-4" />
-              </Button>
-            </Link>
-
-            {/* Growth Tools Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="flex items-center gap-2">
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-4">
+              <AnalyzeSkillGapsButton className="flex items-center gap-2" />
+              <Link to="/alerts">
+                <Button variant="outline" className="flex items-center gap-2">
                   <StarsIcon className="h-4 w-4" />
-                  <span className="hidden md:block">Growth Tools</span>
-                  <ChevronDown className="h-4 w-4" />
+                  Create Alerts
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem asChild>
-                  <Link to="/resume" className="flex items-center gap-2">
-                    <FileText className="h-4 w-4" />
-                    Build Resume
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link
-                    to="/ai-cover-letter"
-                    className="flex items-center gap-2"
-                  >
-                    <PenBox className="h-4 w-4" />
-                    Cover Letter
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/interview" className="flex items-center gap-2">
-                    <GraduationCap className="h-4 w-4" />
-                    Interview Prep
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              </Link>
+
+              <Link to="/dashboard">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <LayoutDashboard className="h-4 w-4" />
+                  Industry Insights
+                </Button>
+              </Link>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="flex items-center gap-2">
+                    <StarsIcon className="h-4 w-4" />
+                    Growth Tools
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <Link to="/resume" className="flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      Build Resume
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/ai-cover-letter" className="flex items-center gap-2">
+                      <PenBox className="h-4 w-4" />
+                      Cover Letter
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/interview" className="flex items-center gap-2">
+                      <GraduationCap className="h-4 w-4" />
+                      Interview Prep
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* Mobile Hamburger Menu */}
+            <div className="md:hidden">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Menu className="h-6 w-6" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard" className="flex items-center gap-2">
+                      <LayoutDashboard className="h-4 w-4" />
+                      Industry Insights
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/alerts" className="flex items-center gap-2">
+                      <StarsIcon className="h-4 w-4" />
+                      Create Alerts
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/resume" className="flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      Build Resume
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/ai-cover-letter" className="flex items-center gap-2">
+                      <PenBox className="h-4 w-4" />
+                      Cover Letter
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/interview" className="flex items-center gap-2">
+                      <GraduationCap className="h-4 w-4" />
+                      Interview Prep
+                    </Link>
+                  </DropdownMenuItem>
+                  <div className="p-2">
+                    <AnalyzeSkillGapsButton className="w-full flex items-center justify-center gap-2" />
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </SignedIn>
 
           <SignedOut>

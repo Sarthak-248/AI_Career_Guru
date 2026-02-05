@@ -1,15 +1,23 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
+import { useAuth } from "@clerk/clerk-react";
 
 export default function AnalyzeSkillGapsButton({ className }) {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { getToken } = useAuth();
 
   const handleClick = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/skill-gaps/generate", { method: "POST" });
+      const token = await getToken();
+      const res = await fetch("/api/skill-gaps/generate", { 
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       const data = await res.json();
       if (res.ok) {
         // Navigate to full page to view results
