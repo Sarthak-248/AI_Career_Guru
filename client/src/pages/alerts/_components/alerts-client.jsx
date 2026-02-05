@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState, useTransition } from "react";
-
+import { useAuth } from "@clerk/clerk-react";
 import { JobAlertForm } from "@/components/JobAlertForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,10 +10,14 @@ export function AlertsClient({ initialSubscriptions }) {
     useState(initialSubscriptions);
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState(null);
+  const { getToken } = useAuth();
 
   const refresh = useCallback(async () => {
     try {
-      const response = await fetch("/api/alerts");
+      const token = await getToken();
+      const response = await fetch("/api/alerts", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (!response.ok) {
         throw new Error("Unable to refresh alerts");
       }
@@ -22,7 +26,7 @@ export function AlertsClient({ initialSubscriptions }) {
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  }, [getToken]);
 
   const runAction = useCallback(
     (action) => {
@@ -40,7 +44,11 @@ export function AlertsClient({ initialSubscriptions }) {
 
   const handleToggle = (id) =>
     runAction(async () => {
-      const response = await fetch(`/api/alerts/${id}/toggle`, { method: "POST" });
+      const token = await getToken();
+      const response = await fetch(`/api/alerts/${id}/toggle`, { 
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (!response.ok) throw new Error("Unable to update alert.");
     });
 
@@ -50,13 +58,21 @@ export function AlertsClient({ initialSubscriptions }) {
         "Delete this alert? Matches already sent will stay in history."
       );
       if (!confirmed) return;
-      const response = await fetch(`/api/alerts/${id}`, { method: "DELETE" });
+      const token = await getToken();
+      const response = await fetch(`/api/alerts/${id}`, { 
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (!response.ok) throw new Error("Unable to delete alert.");
     });
 
   const handleManualRun = () =>
     runAction(async () => {
-      const response = await fetch("/api/alerts/run", { method: "POST" });
+      const token = await getToken();
+      const response = await fetch("/api/alerts/run", { 
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (!response.ok) throw new Error("Runner failed. Check logs.");
       setMessage("Runner triggered. Check your inbox for matches.");
     });

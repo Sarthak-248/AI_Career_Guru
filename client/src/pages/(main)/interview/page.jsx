@@ -3,15 +3,20 @@ import { Loader2 } from "lucide-react";
 import StatsCards from "./_components/stats-cards";
 import PerformanceChart from "./_components/performace-chart";
 import QuizList from "./_components/quiz-list";
+import { useAuth } from "@clerk/clerk-react";
 
 export default function InterviewPrepPage() {
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { getToken } = useAuth();
 
   useEffect(() => {
     const fetchAssessments = async () => {
       try {
-        const res = await fetch("/api/interview/history");
+        const token = await getToken();
+        const res = await fetch("/api/interview/history", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         if (res.ok) {
           const data = await res.json();
           setAssessments(data);
@@ -23,7 +28,7 @@ export default function InterviewPrepPage() {
       }
     };
     fetchAssessments();
-  }, []);
+  }, [getToken]);
 
   if (loading) {
     return (

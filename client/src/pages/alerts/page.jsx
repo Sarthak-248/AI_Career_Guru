@@ -1,33 +1,38 @@
 import { useEffect, useState } from "react";
-import { useUser } from "@clerk/clerk-react";
+import { useUser, useAuth } from "@clerk/clerk-react";
 import { Navigate } from "react-router-dom";
 
 import { AlertsClient } from "./_components/alerts-client";
 
 export default function AlertsPage() {
   const { isLoaded, isSignedIn } = useUser();
+  const { getToken } = useAuth();
   const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (isSignedIn) {
-      fetch("/api/alerts")
-        .then((res) => {
-          if (!res.ok) throw new Error("Failed to fetch");
-          return res.json();
-        })
-        .then((data) => {
-          setSubscriptions(data.subscriptions || []);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error("Failed to load alerts", err);
-          setLoading(false);
+      getToken().then(token => {
+        return fetch("/api/alerts", {
+          headers: { Authorization: `Bearer ${token}` }
         });
+      })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch");
+        return res.json();
+      })
+      .then((data) => {
+        setSubscriptions(data.subscriptions || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to load alerts", err);
+        setLoading(false);
+      });
     } else if (isLoaded) {
         setLoading(false);
     }
-  }, [isLoaded, isSignedIn]);
+  }, [isLoaded, isSignedIn, getToken]);
 
   if (!isLoaded) return <div>Loading...</div>;
 

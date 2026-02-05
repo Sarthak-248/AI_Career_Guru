@@ -1,15 +1,20 @@
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import ResumeBuilder from "./_components/resume-builder";
+import { useAuth } from "@clerk/clerk-react";
 
 export default function ResumePage() {
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { getToken } = useAuth();
 
   useEffect(() => {
     const fetchResume = async () => {
       try {
-        const res = await fetch("/api/resume");
+        const token = await getToken();
+        const res = await fetch("/api/resume", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         if (res.ok) {
           const data = await res.json();
           setResume(data);
@@ -21,7 +26,7 @@ export default function ResumePage() {
       }
     };
     fetchResume();
-  }, []);
+  }, [getToken]);
 
   if (loading) {
     return (
