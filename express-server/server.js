@@ -11,7 +11,12 @@ const envPath = path.resolve(__dirname, "../.env");
 const result = dotenv.config({ path: envPath });
 
 if (result.error) {
-  console.error("Error loading .env file:", result.error);
+  // Only log error if it's NOT a missing file error, or if we are in development
+  if (result.error.code !== 'ENOENT') {
+     console.error("Error loading .env file:", result.error);
+  } else {
+     console.log("No .env file found. Assuming environment variables are provided via the host.");
+  }
 }
 
 // Explicitly ensure the key expected by Clerk Backend is present
