@@ -6,14 +6,21 @@ import { Outlet } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 
 export default function RootLayout() {
-  const { userId, isLoaded } = useAuth();
+  const { userId, isLoaded, getToken } = useAuth();
 
   useEffect(() => {
     if (isLoaded && userId) {
       // Sync user with backend
-      fetch('/api/user/sync', { method: 'POST' }).catch(console.error);
+      getToken().then(token => {
+        fetch('/api/user/sync', { 
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }).catch(console.error);
+      });
     }
-  }, [isLoaded, userId]);
+  }, [isLoaded, userId, getToken]);
 
   useEffect(() => {
      // Chatling Script

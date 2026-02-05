@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import DashboardView from "./_component/dashboard-view";
+import { useAuth } from "@clerk/clerk-react";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const { getToken } = useAuth();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({
     insights: null,
@@ -14,8 +16,11 @@ export default function DashboardPage() {
   useEffect(() => {
     const checkUserAndLoadData = async () => {
       try {
+        const token = await getToken();
         // Check onboarding
-        const onboardingRes = await fetch("/api/user/onboarding-status");
+        const onboardingRes = await fetch("/api/user/onboarding-status", {
+           headers: { Authorization: `Bearer ${token}` }
+        });
         if (onboardingRes.ok) {
           const onboardingData = await onboardingRes.json();
           if (!onboardingData.isOnboarded) {
@@ -26,8 +31,12 @@ export default function DashboardPage() {
 
         // Load concurrent data
         const [insightsRes, skillRes] = await Promise.all([
-          fetch("/api/dashboard/insights"),
-          fetch("/api/skill-gaps"),
+          fetch("/api/dashboard/insights", {
+              headers: { Authorization: `Bearer ${token}` }
+          }),
+          fetch("/api/skill-gaps", {
+              headers: { Authorization: `Bearer ${token}` }
+          }),
         ]);
 
         let insights = null;
@@ -51,7 +60,7 @@ export default function DashboardPage() {
     };
 
     checkUserAndLoadData();
-  }, [navigate]);
+  }, [navigate, getToken]);
 
   if (loading) {
     return (
