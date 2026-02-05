@@ -58,7 +58,7 @@ const generateLearningPath = async (missingSkills = [], context = {}) => {
 };
 
 
-router.post("/generate", requireAuth(), async (req, res) => {
+const generateAnalysis = async (req, res) => {
     try {
         const { userId } = req.auth;
         const user = await db.user.findUnique({
@@ -107,6 +107,9 @@ router.post("/generate", requireAuth(), async (req, res) => {
         }
         res.status(500).json({ ok: false, error: error.message });
     }
-});
+};
+
+router.post("/generate", requireAuth(), generateAnalysis);
+router.get("/", requireAuth(), generateAnalysis);
 
 export default router;
