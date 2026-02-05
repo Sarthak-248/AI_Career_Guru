@@ -6,7 +6,7 @@
     "start": "node express-server/server.js",
     "start:client": "cd client && npm run dev",
     "start:server": "cd express-server && npm run dev",
-    "build": "cd client && npm install && npm run build && cd ../express-server && npm install",
+    "build": "cd client && npm install && npm run build && cd ../express-server && npm install && npm run prisma:generate",
     "install:all": "cd client && npm install && cd ../express-server && npm install",
     "prisma:generate": "prisma generate"
   },
